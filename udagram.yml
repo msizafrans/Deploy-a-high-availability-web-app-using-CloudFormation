@@ -1,0 +1,172 @@
+Description: Udagram High Availability Application resources
+
+Parameters:
+
+  NetTeamInfra:
+    Description: An environment name that will be prefixed to resource names
+    Type: String
+
+  AppName:
+    Description: Name of the app related resources
+    Type: String
+
+Resources:
+
+  MyLoadBalancerSecGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow http access to our load balancer
+      VpcId:
+        Fn::ImportValue:
+          !Sub "${NetTeamInfra}-vpc-id"
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+
+  UdagramServerSecGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow http access to our hosts from MyLoadBalancerSecGroup 
+      VpcId:
+        Fn::ImportValue:
+          !Sub "${NetTeamInfra}-vpc-id"
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        SourceSecurityGroupId: !Ref MyLoadBalancerSecGroup
+      SecurityGroupEgress:
+      - IpProtocol: tcp
+        FromPort: 0
+        ToPort: 65535
+        CidrIp: 0.0.0.0/0
+
+  UdagramAppLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties: 
+      LaunchTemplateName: !Sub "${AppName}-web-servers"
+      LaunchTemplateData:
+        UserData:
+          Fn::Base64: !Sub |
+            #!/bin/bash
+            sudo apt-get update -y
+            sudo apt-get install nginx -y
+            sudo curl -o /var/www/html/index.html https://udagram-576788639951-bucket.s3.amazonaws.com/index.html
+            sudo systemctl restart nginx
+        ImageId: ami-053b0d53c279acc90
+        SecurityGroupIds:
+          - !Ref UdagramServerSecGroup
+        InstanceType: t2.micro
+        BlockDeviceMappings:
+        - DeviceName: "/dev/sdk"
+          Ebs:
+            VolumeSize: '10'
+        IamInstanceProfile:
+          Name: !Ref UdagramAppInstanceProfile
+                  
+  UdagramAppInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${AppName}-web-servers"
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: 'Allow'
+          Principal:
+            Service:
+            - 'ec2.amazonaws.com'
+          Action:
+          - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: myUdagramS3BucketPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Action:
+              - 's3:GetObject'
+              - 's3:PutObject'
+              Resource:
+                - arn:aws:s3:::udagram-576788639951-bucket/*
+
+  UdagramAppInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: '/'
+      Roles:
+      - !Ref UdagramAppInstanceRole
+
+  UdagramWebAppGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      VPCZoneIdentifier:
+      - Fn::ImportValue: 
+          !Sub "${NetTeamInfra}-private-subnets"
+      LaunchTemplate:
+        LaunchTemplateId: !Ref UdagramAppLaunchTemplate
+        Version: !GetAtt UdagramAppLaunchTemplate.LatestVersionNumber
+      MinSize: '4'
+      DesiredCapacity: '4'
+      MaxSize: '4'
+      TargetGroupARNs:
+      - Ref: UdagramAppTargetGroup
+
+  MyLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Subnets:
+      - Fn::ImportValue: !Sub "${NetTeamInfra}-public-subnet1"
+      - Fn::ImportValue: !Sub "${NetTeamInfra}-public-subnet2"
+      SecurityGroups:
+      - Ref: MyLoadBalancerSecGroup
+
+  Listener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+      - Type: forward
+        TargetGroupArn:
+          Ref: UdagramAppTargetGroup
+      LoadBalancerArn:
+        Ref: MyLoadBalancer
+      Port: '80'
+      Protocol: HTTP
+
+  MyLoadBalancerListenerRule:
+      Type: AWS::ElasticLoadBalancingV2::ListenerRule
+      Properties:
+        Actions:
+        - Type: forward
+          TargetGroupArn: !Ref 'UdagramAppTargetGroup'
+        Conditions:
+        - Field: path-pattern
+          Values: [/]
+        ListenerArn: !Ref 'Listener'
+        Priority: 1
+
+  UdagramAppTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckEnabled: true
+      HealthCheckIntervalSeconds: 10
+      HealthCheckPath: /
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 8
+      HealthyThresholdCount: 2
+      Port: 80
+      Protocol: HTTP
+      UnhealthyThresholdCount: 5
+      VpcId: 
+        Fn::ImportValue:
+          Fn::Sub: "${NetTeamInfra}-vpc-id"
+
+Outputs:
+  LoadBalancerURL:
+    Description: Public URL of the Load Balancer
+    Value:
+      Fn::Join:
+        - ""
+        - - "http://"
+          - !GetAtt MyLoadBalancer.DNSName

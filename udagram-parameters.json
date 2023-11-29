@@ -1,0 +1,10 @@
+[
+	{
+		"ParameterKey": "NetTeamInfra",
+		"ParameterValue": "NetTeamManagedInfra"
+	},
+	{
+		"ParameterKey": "AppName",
+		"ParameterValue": "udagram"
+	}
+]
