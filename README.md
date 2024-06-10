@@ -13,6 +13,7 @@ Your favorite IDE or text editor ready to work.
 - The network-parameters.json file contains parameters for the network.yml values.
 - The "udagram.yml" file is a template file to deploy the Udagram High Availability Application EC2 resources which includes Launch Template, Load Balancer, Security Groups, IAM Role, Instance Profile, AutoScaling Group, Listener, ListenerRule, and TargetGroup.
 - The "udagram-parameters.json" file contains parameters for the udagram.yml values.
+- The "runscript.sh" contains the script detailing how the deploy, delete and preview commands work.
    
 # Project Instructions
 
@@ -20,20 +21,20 @@ Your favorite IDE or text editor ready to work.
 
 2. You'll need to manually create an S3 bucket and it should have public-read access. Your servers IAM Role should provide read and write permissions to this bucket. 
 
-3. Firstly, deploy network.yml and network-parameters.json scripts, follow the instructions in the "runscript.sh" file.
+3. Deploy network.yml and network-parameters.json scripts, see below examples on "How to Spin up Resources"
 
-4. Secondly, deploy udagram.yml and udagram-parameters.json scripts, follow the instructions in the "runscript.sh" file.
+4. Deploy udagram.yml and udagram-parameters.json scripts, see below examples on "How to Tear down Resources"
 
 5. To avoid errors when tearing down resources, delete the application stack first followed by the network stack.
 
 6. Thereafter, empty and delete the bucket manually.
 
-# To Spin up Resoucers
+# How to Spin up Resources
 - chmod +x runscript.sh
 - ./runscript.sh deploy network network.yml network-parameters.json us-east-1
 - ./runscript.sh deploy udagram udagram.yml udagram-parameters.json us-east-1
 
-# Tear down Resources
+# How to tear down Resources
 - ./runscript.sh delete udagram udagram.yml udagram-parameters.json us-east-1
 - ./runscript.sh delete network network.yml network-parameters.json us-east-1
   
