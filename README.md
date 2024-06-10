@@ -29,7 +29,9 @@ Your favorite IDE or text editor ready to work.
 4. To auto spin up and tear down of the CloudFormation stacks, follow the instructions in the "runscript.sh" 
 
 
+
 ## 2x Script Usage examples:
+
 
 # To Spin up Resoucers
 ./runscript.sh deploy network network.yml network-parameters.json us-east-1
