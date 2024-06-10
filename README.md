@@ -18,11 +18,15 @@ Your favorite IDE or text editor ready to work.
 
 1. Design a visual diagram depicting the infrastructure layout and resources involved, which will be deployed when executing the CloudFormation scripts, (see "Diagram.JPG" file).
 
-2. Firstly, deploy network.yml and network-parameters.json scripts, follow the instructions in the "runscript.sh" file.
+2. You'll need to manually create an S3 bucket and it should have public-read access. Your servers IAM Role should provide read and write permissions to this bucket. 
 
-3. Secondly, deploy udagram.yml and udagram-parameters.json scripts, follow the instructions in the "runscript.sh" file.
+3. Firstly, deploy network.yml and network-parameters.json scripts, follow the instructions in the "runscript.sh" file.
 
-4. To avoid errors when tearing down resources, delete the application stack first followed by the network stack.
+4. Secondly, deploy udagram.yml and udagram-parameters.json scripts, follow the instructions in the "runscript.sh" file.
+
+5. To avoid errors when tearing down resources, delete the application stack first followed by the network stack.
+
+6. Thereafter, empty and delete the bucket manually.
 
 
 # To Spin up Resoucers
