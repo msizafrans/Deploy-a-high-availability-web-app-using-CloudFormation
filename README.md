@@ -36,7 +36,6 @@ Your favorite IDE or text editor ready to work.
 ## Useful Information
 To access the deployed application, check out the outputs tab of the udagram stack and open the Load balancer URL provided in that section.
 
-To avoid errors when tearing down resources, delete the application stack first followed by the network stack.
 
 
 
