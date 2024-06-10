@@ -16,7 +16,7 @@ Your favorite IDE or text editor ready to work.
    
 # Project Instructions
 
-1. Design a visual diagram depicting the infrastructure layout and resources involved, which will be deployed when executing the CloudFormation scripts, (see "Diagram.JPG" file)
+1. Design a visual diagram depicting the infrastructure layout and resources involved, which will be deployed when executing the CloudFormation scripts, (see "Diagram.JPG" file).
 
 2. Firstly, deploy network.yml and network-parameters.json scripts, follow the instructions in the "runscript.sh" file.
 
