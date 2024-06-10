@@ -10,19 +10,19 @@ Your favorite IDE or text editor ready to work.
 
 # Working files Context:
 - The "network.yml" file is a template file to deploy networking infrastructure which is managed by the networking team. Resources in the file includes VPC, InternetGateway, InternetGatewayAttachment, Subnets and NATGateways.
-- The network-parameters.json file contains parameters for the network.yml values
-- The "udagram.yml" file is a template file to deploy the Udagram High Availability Application resources which includes Launch Template, LoadBalancer, Security Groups, IAM Role, InstanceProfile, AutoScalingGroup, Listener, ListenerRule, and TargetGroup
-- The "udagram-parameters.json" file contains parameters for the udagram.yml values
+- The network-parameters.json file contains parameters for the network.yml values.
+- The "udagram.yml" file is a template file to deploy the Udagram High Availability Application EC2 resources which includes Launch Template, Load Balancer, Security Groups, IAM Role, Instance Profile, Auto Scaling Group, Listener, ListenerRule, and TargetGroup.
+- The "udagram-parameters.json" file contains parameters for the udagram.yml values.
    
 # Project Instructions
 
 1. Design a visual diagram depicting the infrastructure layout and resources involved, which will be deployed when executing the CloudFormation scripts, (see "Diagram.JPG" file)
 
-2. Firstly, deploy network.yml and network-parameters.json CloudFormation scripts files from the main repository, follow the instructions in the "runscript.sh" file.
+2. Firstly, deploy network.yml and network-parameters.json scripts, follow the instructions in the "runscript.sh" file.
 
-3. Secondly, deploy udagram.yml and udagram-parameters.json CloudFormation scripts files from the main repository, follow the instructions in the "runscript.sh" file.
+3. Secondly, deploy udagram.yml and udagram-parameters.json scripts, follow the instructions in the "runscript.sh" file.
 
-4. To auto spin up and tear down of the CloudFormation stacks, follow the instructions in the "runscript.sh" 
+4. To avoid errors when tearing down resources, delete the application stack first followed by the network stack.
 
 
 # To Spin up Resoucers
