@@ -1,16 +1,6 @@
-# Project Introduction and Implementation
-
-Creating this project will give you the hands-on experience you need to talk about infrastructure as code confidently. I have chosen a realistic scenario where you will deploy a dummy application (a sample JavaScript or HTML file) to an NGINX server running on an EC2 instance.
-
-# There will be two parts to this project:
-
-Diagram: Designed a visual diagram depicting the infrastructure layout and resources involved, which will be deployed when executing the CloudFormation scripts. (see "Diagram.JPG" file)
-Scripts (Template and Parameters): Download matching CloudFormation scripts files from the main repository.
-
 # Deploy a high-availability web app using CloudFormation
 In this project, you’ll deploy web servers for a highly available web app using CloudFormation. You will write the code that creates and deploys the infrastructure and application for an Instagram-like app from the ground up. You will begin with deploying the networking components, followed by servers, security roles and software. 
 
-# Getting Started
 # Dependencies
 AWS CLI installed and configured in your workspace using an AWS IAM role with Administrator permissions 
 
