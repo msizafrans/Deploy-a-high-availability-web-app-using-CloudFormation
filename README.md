@@ -8,19 +8,21 @@ Access to a diagram creator software of your choice.
 
 Your favorite IDE or text editor ready to work.
 
+# Working files Context:
+- The "network.yml" file is a template file to deploy networking infrastructure which is managed by the networking team. Resources in the file includes VPC, InternetGateway, InternetGatewayAttachment, Subnets and NATGateways.
+- The network-parameters.json file contains parameters for the network.yml values
+- The "udagram.yml" file is a template file to deploy the Udagram High Availability Application resources which includes Launch Template, LoadBalancer, Security Groups, IAM Role, InstanceProfile, AutoScalingGroup, Listener, ListenerRule, and TargetGroup
+- The "udagram-parameters.json" file contains parameters for the udagram.yml values
+   
 # Project Instructions
 
-1. I designed a visual diagram depicting the infrastructure layout and resources involved, which will be deployed when executing the CloudFormation scripts, (see "Diagram.JPG" file)
+1. Design a visual diagram depicting the infrastructure layout and resources involved, which will be deployed when executing the CloudFormation scripts, (see "Diagram.JPG" file)
 
 2. Firstly, deploy network.yml and network-parameters.json CloudFormation scripts files from the main repository, follow the instructions in the "runscript.sh" file.
 
 3. Secondly, deploy udagram.yml and udagram-parameters.json CloudFormation scripts files from the main repository, follow the instructions in the "runscript.sh" file.
 
 4. To auto spin up and tear down of the CloudFormation stacks, follow the instructions in the "runscript.sh" 
-
-
-
-## 2x Script Usage examples:
 
 
 # To Spin up Resoucers
@@ -31,14 +33,9 @@ Your favorite IDE or text editor ready to work.
 ./runscript.sh delete udagram udagram.yml udagram-parameters.json us-east-1
 ./runscript.sh delete network network.yml network-parameters.json us-east-1
 
-# To preview Resources 
-./runscript.sh deploy network network.yml network-parameters.json us-east-1
-./runscript.sh deploy udagram udagram.yml udagram-parameters.json us-east-1
-# then confirm the changes by executing-change-set given command
-
 ## Useful Information
 To access the deployed application, check out the outputs tab of the udagram stack and open the Load balancer URL provided in that section.
-Additionally, here is a working url of the deployed app http://udagr-myloa-nhq1py8j8iwv-1970531655.us-east-1.elb.amazonaws.com/ after deploying the network and udagram stacks.
+
 To avoid errors when tearing down resources, delete the application stack first followed by the network stack.
 
 
