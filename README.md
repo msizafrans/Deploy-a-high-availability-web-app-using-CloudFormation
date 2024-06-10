@@ -28,7 +28,6 @@ Your favorite IDE or text editor ready to work.
 
 6. Thereafter, empty and delete the bucket manually.
 
-
 # To Spin up Resoucers
 - chmod +x runscript.sh
 - ./runscript.sh deploy network network.yml network-parameters.json us-east-1
@@ -37,7 +36,7 @@ Your favorite IDE or text editor ready to work.
 # Tear down Resources
 - ./runscript.sh delete udagram udagram.yml udagram-parameters.json us-east-1
 - ./runscript.sh delete network network.yml network-parameters.json us-east-1
-
+  
 ## Useful Information
 To access the deployed application, check out the outputs tab of the udagram stack and open the Load balancer URL provided in that section.
 
