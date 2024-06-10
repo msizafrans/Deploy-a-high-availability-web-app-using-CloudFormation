@@ -8,7 +8,7 @@ Access to a diagram creator software of your choice.
 
 Your favorite IDE or text editor ready to work.
 
-# Working files Context:
+# Working files Context
 - The "network.yml" file is a template file to deploy networking infrastructure which is managed by the networking team. Resources in the file includes VPC, InternetGateway, InternetGatewayAttachment, Subnets and NATGateways.
 - The network-parameters.json file contains parameters for the network.yml values.
 - The "udagram.yml" file is a template file to deploy the Udagram High Availability Application EC2 resources which includes Launch Template, Load Balancer, Security Groups, IAM Role, Instance Profile, Auto Scaling Group, Listener, ListenerRule, and TargetGroup.
