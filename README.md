@@ -30,6 +30,7 @@ Your favorite IDE or text editor ready to work.
 
 
 # To Spin up Resoucers
+- chmod +x runscript.sh
 - ./runscript.sh deploy network network.yml network-parameters.json us-east-1
 - ./runscript.sh deploy udagram udagram.yml udagram-parameters.json us-east-1
 
