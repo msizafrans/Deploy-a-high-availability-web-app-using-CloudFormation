@@ -1,46 +1,60 @@
-# Deploy a high-availability web app using CloudFormation
-In this project, you’ll deploy web servers for a highly available web app using CloudFormation. You will write the code that creates and deploys the infrastructure and application for an Instagram-like app from the ground up. You will begin with deploying the networking components, followed by servers, security roles and software. 
+# Deploy a High-Availability Web App Using CloudFormation (IaC)
+In this project, you will deploy web servers for a highly available web app using CloudFormation. You will write the code to create and deploy the infrastructure and application for an Instagram-like app from scratch. The process begins with deploying the networking components, followed by servers, security roles, and software.
+
 
 # Dependencies
 AWS CLI installed and configured in your workspace using an AWS IAM role with Administrator permissions.
-
-Access to a diagram creator software of your choice.
-
+Access to a diagram creation software of your choice.
 Your favorite IDE or text editor ready to work.
 
-# Working files Context
-- The "network.yml" file is a template file to deploy networking infrastructure which is managed by the networking team. Resources in the file includes VPC, Internet Gateway, Subnets, EC2 instances and NAT Gateways.
-- The network-parameters.json file contains parameters for the network.yml values.
-- The "udagram.yml" file is a template file to deploy the Udagram High Availability Application EC2 resources which includes Launch Template, Load Balancer, Security Groups, IAM Role, Instance Profile, AutoScaling Group, Listener, ListenerRule, and TargetGroup.
-- The "udagram-parameters.json" file contains parameters for the udagram.yml values.
-- The "runscript.sh" contains the script detailing how the deploy, delete and preview commands work.
-   
+
+# Working Files Context
+network.yml: A template file to deploy networking infrastructure managed by the networking team. Resources include VPC, Internet Gateway, Subnets, EC2 instances, and NAT Gateways.
+
+network-parameters.json: Contains parameters for the values/placeholders in the network.yml file.
+
+udagram.yml: A template file to deploy the Udagram High Availability Application EC2 resources, including Launch Template, Load Balancer, Security Groups, IAM Role, Instance Profile, AutoScaling Group, Listener, ListenerRule, and TargetGroup.
+
+udagram-parameters.json: Contains parameters for the values/placeholders in the udagram.yml file.
+
+runscript.sh: A script detailing how to deploy and tear down resources automatically.
+
+
 # Project Instructions
 
-1. Design a visual diagram depicting the infrastructure layout and resources involved, which will be deployed when executing the CloudFormation scripts, (see "Diagram.JPG" file).
+1. Plan and Design a visual diagram depicting the infrastructure layout of resources (see "Diagram.JPG" file).
 
-2. You'll need to manually create an S3 bucket and it should have public-read access. Your servers IAM Role should provide read and write permissions to this bucket. 
+2. First, deploy the network.yml and network-parameters.json scripts. Refer to the guideline below on "How to Spin Up Resources."
 
-3. Deploy network.yml and network-parameters.json scripts, see below examples on "How to Spin up Resources"
+3. Next, deploy the udagram.yml and udagram-parameters.json scripts. Refer to the guideline below on "How to Tear Down Resources."
 
-4. Deploy udagram.yml and udagram-parameters.json scripts, see below examples on "How to Tear down Resources"
+4. To avoid errors when tearing down resources, delete the application/udagram stack first, followed by the network stack.
 
-5. To avoid errors when tearing down resources, delete the application stack first followed by the network stack.
 
-6. Thereafter, empty and delete the bucket manually.
+# How to Spin Up Resources
 
-# How to Spin up Resources
-- chmod +x runscript.sh
-- ./runscript.sh deploy network network.yml network-parameters.json us-east-1
-- ./runscript.sh deploy udagram udagram.yml udagram-parameters.json us-east-1
+From your IDE terminal, ensure you have permission to execute files in your working directory. For example, if you are using Visual Studio Code, you might need to run chmod +x runscript.sh to grant execute permission.
 
-# How to tear down Resources
-- ./runscript.sh delete udagram udagram.yml udagram-parameters.json us-east-1
-- ./runscript.sh delete network network.yml network-parameters.json us-east-1
-  
-## Useful Information
-To access the deployed application, check out the outputs tab of the udagram stack and open the Load balancer URL provided in that section.
+./runscript.sh deploy network network.yml network-parameters.json us-east-1
+./runscript.sh deploy udagram udagram.yml udagram-parameters.json us-east-1
 
+# How to Tear Down Resources
+
+./runscript.sh delete udagram udagram.yml udagram-parameters.json us-east-1
+./runscript.sh delete network network.yml network-parameters.json us-east-1
+
+
+# Useful Information
+To access the deployed application, check the outputs tab of the udagram stack and open the Load Balancer URL provided in that section.
+
+
+# Topics Covered
+- AWS - Cloud Computing
+- Static Content
+- Infrastructure Design
+- Security Groups
+- Infrastructure as Code
+- CloudFormation
 
 
 
