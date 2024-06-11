@@ -9,15 +9,15 @@ In this project, you will deploy web servers for a highly available web app usin
 
 
 # Working Files Context
-network.yml: A template file to deploy networking infrastructure managed by the networking team. Resources include VPC, Internet Gateway, Subnets, EC2 instances, and NAT Gateways.
+a. network.yml: A template file to deploy networking infrastructure managed by the networking team. Resources include VPC, Internet Gateway, Subnets, EC2 instances, and NAT Gateways.
 
-network-parameters.json: Contains parameters for the values/placeholders in the network.yml file.
+b. network-parameters.json: Contains parameters for the values/placeholders in the network.yml file.
 
-udagram.yml: A template file to deploy the Udagram High Availability Application EC2 resources, including Launch Template, Load Balancer, Security Groups, IAM Role, Instance Profile, AutoScaling Group, Listener, ListenerRule, and TargetGroup.
+c. udagram.yml: A template file to deploy the Udagram High Availability Application EC2 resources, including Launch Template, Load Balancer, Security Groups, IAM Role, Instance Profile, AutoScaling Group, Listener, ListenerRule, and TargetGroup.
 
-udagram-parameters.json: Contains parameters for the values/placeholders in the udagram.yml file.
+d. udagram-parameters.json: Contains parameters for the values/placeholders in the udagram.yml file.
 
-runscript.sh: A script detailing how to deploy and tear down resources automatically.
+e. runscript.sh: A script detailing how to deploy and tear down resources automatically.
 
 
 # Project Instructions
