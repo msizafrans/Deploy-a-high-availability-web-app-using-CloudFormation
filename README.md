@@ -3,9 +3,9 @@ In this project, you will deploy web servers for a highly available web app usin
 
 
 # Dependencies
-AWS CLI installed and configured in your workspace using an AWS IAM role with Administrator permissions.
-Access to a diagram creation software of your choice.
-Your favorite IDE or text editor ready to work.
+- AWS CLI installed and configured in your workspace using an AWS IAM role with Administrator permissions.
+- Access to a diagram creation software of your choice.
+- Your favorite IDE or text editor ready to work.
 
 
 # Working Files Context
@@ -35,13 +35,13 @@ runscript.sh: A script detailing how to deploy and tear down resources automatic
 
 From your IDE terminal, ensure you have permission to execute files in your working directory. For example, if you are using Visual Studio Code, you might need to run chmod +x runscript.sh to grant execute permission.
 
-./runscript.sh deploy network network.yml network-parameters.json us-east-1
-./runscript.sh deploy udagram udagram.yml udagram-parameters.json us-east-1
+- ./runscript.sh deploy network network.yml network-parameters.json us-east-1
+- ./runscript.sh deploy udagram udagram.yml udagram-parameters.json us-east-1
 
 # How to Tear Down Resources
 
-./runscript.sh delete udagram udagram.yml udagram-parameters.json us-east-1
-./runscript.sh delete network network.yml network-parameters.json us-east-1
+- ./runscript.sh delete udagram udagram.yml udagram-parameters.json us-east-1
+- ./runscript.sh delete network network.yml network-parameters.json us-east-1
 
 
 # Useful Information
