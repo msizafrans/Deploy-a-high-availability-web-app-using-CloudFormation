@@ -17,7 +17,7 @@ In this project, I deployed web servers for a highly available web app using Clo
 - AWS Services
 
 
-# Context of Working Files
+# Content of Working Files
 
 - **network.yml**: A template file to deploy networking infrastructure managed by the networking team. Resources include VPC, Internet Gateway, Subnets, EC2 instances, and NAT Gateways.
 
