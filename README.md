@@ -1,5 +1,5 @@
 # Deploy a High-Availability Web App Using CloudFormation (IaC)
-In this project, you will deploy web servers for a highly available web app using CloudFormation. You will write the code to create and deploy the infrastructure and application for an Instagram-like app from scratch. The process begins with deploying the networking components, followed by servers, security roles, and software.
+In this project, you will deploy web servers for a highly available web app using CloudFormation. Write the code to create and deploy the infrastructure and application for an Instagram-like app from scratch. The process begins with deploying the networking components, followed by servers, security roles, and software.
 
 
 # Dependencies
