@@ -8,6 +8,15 @@ In this project, I deployed web servers for a highly available web app using Clo
 - Your favorite IDE or text editor ready to work.
 
 
+# Topics Covered
+- High Availability
+- Infrastructure as Code (IaC)
+- Security
+- Automation and Scripting
+- Scalability
+- AWS Services
+
+
 # Working Files Context
 
 - **network.yml**: A template file to deploy networking infrastructure managed by the networking team. Resources include VPC, Internet Gateway, Subnets, EC2 instances, and NAT Gateways.
@@ -21,7 +30,6 @@ In this project, I deployed web servers for a highly available web app using Clo
 - **runscript.sh**: A script detailing how to deploy and tear down resources automatically.
 
 
-
 # Project Instructions
 
 1. Plan and design a visual diagram that depicts the infrastructure layout of resources (see "Diagram.JPG" file).
@@ -31,7 +39,6 @@ In this project, I deployed web servers for a highly available web app using Clo
 3. Next, deploy the udagram.yml and udagram-parameters.json scripts. Refer to "How to Spin Up Resources" section below.
 
 4. To avoid errors when tearing down resources, delete the udagram/application stack first, followed by the network stack.
-
 
 
 # How to Spin Up Resources
@@ -52,13 +59,7 @@ From your IDE terminal, ensure you have permission to execute files in your work
 To access the deployed application, check the outputs tab of the udagram stack and open the Load Balancer URL provided in that section.
 
 
-# Topics Covered
-- High Availability
-- Infrastructure as Code (IaC)
-- Security
-- Automation and Scripting
-- Scalability
-- AWS Services
+
 
 
 
