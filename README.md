@@ -24,16 +24,16 @@ e. runscript.sh: A script detailing how to deploy and tear down resources automa
 
 1. Plan and design a visual diagram that depicts the infrastructure layout of resources (see "Diagram.JPG" file).
 
-2. First, deploy the network.yml and network-parameters.json scripts. Refer to the guideline below on "How to Spin Up Resources."
+2. First, deploy the network.yml and network-parameters.json scripts. Refer to "How to Spin Up Resources" section below.
 
-3. Next, deploy the udagram.yml and udagram-parameters.json scripts. Refer to the guideline below on "How to Tear Down Resources."
+3. Next, deploy the udagram.yml and udagram-parameters.json scripts. Refer to "How to Spin Up Resources" section below.
 
-4. To avoid errors when tearing down resources, delete the application/udagram stack first, followed by the network stack.
+4. To avoid errors when tearing down resources, delete the udagram/application stack first, followed by the network stack.
 
 
 # How to Spin Up Resources
 
-From your IDE terminal, ensure you have permission to execute files in your working directory. For example, if you are using Visual Studio Code, you might need to run chmod +x runscript.sh to grant execute permission.
+# From your IDE terminal, ensure you have permission to execute files in your working directory. For example, if you are using Visual Studio Code, you might need to run chmod +x runscript.sh to grant execute permission.
 
 - ./runscript.sh deploy network network.yml network-parameters.json us-east-1
 - ./runscript.sh deploy udagram udagram.yml udagram-parameters.json us-east-1
@@ -49,9 +49,11 @@ To access the deployed application, check the outputs tab of the udagram stack a
 
 
 # Topics Covered
-- AWS - Cloud Computing
+- Amazon Web Services
+- Cloud Computing
 - Static Content
 - Infrastructure Design
+- Networking Infrastructure
 - Security Groups
 - Infrastructure as Code
 - CloudFormation
