@@ -33,7 +33,7 @@ e. runscript.sh: A script detailing how to deploy and tear down resources automa
 
 # How to Spin Up Resources
 
-# From your IDE terminal, ensure you have permission to execute files in your working directory. For example, if you are using Visual Studio Code, you might need to run chmod +x runscript.sh to grant execute permission.
+From your IDE terminal, ensure you have permission to execute files in your working directory. For example, if you are using Visual Studio Code, you might need to run chmod +x runscript.sh to grant execute permission.
 
 - ./runscript.sh deploy network network.yml network-parameters.json us-east-1
 - ./runscript.sh deploy udagram udagram.yml udagram-parameters.json us-east-1
