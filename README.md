@@ -34,9 +34,9 @@ In this project, I deployed web servers for a highly available web app using Clo
 
 1. Plan and design a visual diagram that depicts the infrastructure layout of resources (see "Diagram.JPG" file).
 
-2. First, deploy the network.yml and network-parameters.json scripts. Refer to "How to Spin Up Resources" section below.
+2. Firstly, deploy the network.yml and network-parameters.json scripts. Refer to "How to Spin Up Resources" section below.
 
-3. Next, deploy the udagram.yml and udagram-parameters.json scripts. Refer to "How to Spin Up Resources" section below.
+3. Next, deploy the udagram.yml and udagram-parameters.json scripts.
 
 4. To avoid errors when tearing down resources, delete the udagram/application stack first, followed by the network stack.
 
