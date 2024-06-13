@@ -1,5 +1,5 @@
 # Deploy a High-Availability Web App Using CloudFormation (IaC)
-In this project, you will deploy web servers for a highly available web app using CloudFormation. Write the code to create and deploy the infrastructure and application for an Instagram-like app from scratch. The process begins with deploying the networking components, followed by servers, security roles, and software.
+In this project, I deployed web servers for a highly available web app using CloudFormation. Wrote the code to create and deploy the infrastructure and application for an Instagram-like app from scratch. The process begins with deploying the networking components, followed by servers, security roles, and software.
 
 
 # Dependencies
@@ -49,14 +49,13 @@ To access the deployed application, check the outputs tab of the udagram stack a
 
 
 # Topics Covered
-- Amazon Web Services
-- Cloud Computing
-- Static Content
-- Infrastructure Design
+- AWS CloudFormation
+- Bash scripting
+- Infrastructure as Code (IaC)
 - Networking Infrastructure
-- Security Groups
-- Infrastructure as Code
-- CloudFormation
+- Infrastructure Design 
+
+
 
 
 
