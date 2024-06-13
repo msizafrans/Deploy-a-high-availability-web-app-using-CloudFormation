@@ -50,11 +50,11 @@ To access the deployed application, check the outputs tab of the udagram stack a
 
 
 # Topics Covered
-- AWS CloudFormation
-- Bash scripting
+- High Availability
 - Infrastructure as Code (IaC)
-- Virtual Networking Infrastructure
-- Infrastructure Planning and Design
+- Security
+- Automation and Scripting
+- Scalability
 - AWS Services
 
 
