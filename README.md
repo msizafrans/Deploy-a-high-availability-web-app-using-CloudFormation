@@ -13,7 +13,7 @@ a. network.yml: A template file to deploy networking infrastructure managed by t
 
 b. network-parameters.json: Contains parameters for the values/placeholders in the network.yml file.
 
-c. udagram.yml: A template file to deploy the Udagram High Availability Application EC2 resources, including Launch Template, Load Balancer, Security Groups, IAM Role, Instance Profile, AutoScaling Group, Listener, ListenerRule, and TargetGroup.
+c. udagram.yml: A template file to deploy the Udagram Application EC2 resources, including Launch Template, Load Balancer, Security Groups, IAM Role, Instance Profile, AutoScaling Group, Listener, ListenerRule, and TargetGroup.
 
 d. udagram-parameters.json: Contains parameters for the values/placeholders in the udagram.yml file.
 
