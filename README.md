@@ -22,7 +22,7 @@ e. runscript.sh: A script detailing how to deploy and tear down resources automa
 
 # Project Instructions
 
-1. Plan and Design a visual diagram depicting the infrastructure layout of resources (see "Diagram.JPG" file).
+1. Plan and design a visual diagram that depicts the infrastructure layout of resources (see "Diagram.JPG" file).
 
 2. First, deploy the network.yml and network-parameters.json scripts. Refer to the guideline below on "How to Spin Up Resources."
 
