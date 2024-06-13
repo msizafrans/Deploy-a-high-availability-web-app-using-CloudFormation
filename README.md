@@ -53,8 +53,8 @@ To access the deployed application, check the outputs tab of the udagram stack a
 - AWS CloudFormation
 - Bash scripting
 - Infrastructure as Code (IaC)
-- Networking Infrastructure
-- Infrastructure Design 
+- Virtual Networking Infrastructure
+- Infrastructure Planning and Design 
 
 
 
