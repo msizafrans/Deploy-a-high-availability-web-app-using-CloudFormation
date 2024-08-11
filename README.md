@@ -102,7 +102,7 @@ The user data script in the launch template configures each EC2 instance with th
 - **Apache Exporter:** To export Apache metrics to Prometheus.
 - **Alertmanager:** To manage alerts from Prometheus.
 
-# This template is designed for a highly available setup with load balancing, monitoring, and alerting integrated directly into the infrastructure. The template is modular and can be adapted to different environments by changing the parameter values.
+**This template is designed for a highly available setup with load balancing, monitoring, and alerting integrated directly into the infrastructure. The template is modular and can be adapted to different environments by changing the parameter values.**
 
 
 
