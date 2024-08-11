@@ -58,6 +58,51 @@ From your IDE terminal, ensure you have permission to execute files in your work
 # Useful Information
 To access the deployed application, check the outputs tab of the udagram stack and open the Load Balancer URL provided in that section.
 
+This CloudFormation template defines a highly available Udagram application infrastructure on AWS. Here's an overview of the key components and configurations:
+
+# Parameters:
+NetTeamInfra: Specifies the environment name that will be prefixed to the resource names.
+AppName: Defines the name of the application-related resources.
+
+# Resources:
+1. Security Groups:
+MyLoadBalancerSecGroup: Security Group allowing HTTP (port 80) and Prometheus (port 9090) access to the load balancer.
+UdagramServerSecGroup: Security Group allowing HTTP (port 80), SSH (port 22), and Prometheus (port 9090) access to the application servers.
+
+3. IAM Roles and Instance Profiles:
+UdagramAppServerRole: IAM role for EC2 instances, granting permissions to interact with S3 buckets and describe EC2 instances.
+UdagramAppInstanceProfile: Instance profile associated with the above IAM role.
+
+5. Launch Template:
+UdagramAppLaunchTemplate: Defines a launch template that includes the user data script for setting up the application servers, including the installation of Apache, Prometheus, Node Exporter, Apache Exporter, and Alertmanager.
+
+7. Auto Scaling Group:
+UdagramWebAppGroup: Auto Scaling Group with a desired capacity of 2 instances, utilizing the UdagramAppLaunchTemplate and connected to the load balancer's target groups.
+
+9. Load Balancer and Listeners:
+MyLoadBalancer: An Elastic Load Balancer with listeners on ports 80 (HTTP) and 9090 (Prometheus).
+Listeners: Define listener rules for forwarding traffic to the appropriate target groups based on the path pattern.
+
+11. Target Groups:
+UdagramAppTargetGroup: Target group for the application servers, performing health checks on port 80.
+UdagramAppTargetGroup9090: Target group for Prometheus metrics, performing health checks on port 9090.
+
+13. S3 Bucket:
+UdagramBucket: An S3 bucket for application storage, with public access enabled.
+
+15. Network ACLs:
+PublicSubnet1NACL & PublicSubnet2NACL: Network ACLs for the public subnets.
+Inbound and Outbound Rules: Allow traffic on port 9090.
+
+User Data Script:
+The user data script in the launch template configures each EC2 instance with the following:
+
+**Apache Web Server:** To serve the Udagram application.
+**Prometheus and Node Exporter:** For monitoring and metrics collection.
+**Apache Exporter:** To export Apache metrics to Prometheus.
+**Alertmanager:** To manage alerts from Prometheus.
+This template is designed for a highly available setup with load balancing, monitoring, and alerting integrated directly into the infrastructure. The template is modular and can be adapted to different environments by changing the parameter values.
+
 
 
 
