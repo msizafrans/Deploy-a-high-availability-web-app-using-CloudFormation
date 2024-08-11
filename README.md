@@ -61,8 +61,8 @@ To access the deployed application, check the outputs tab of the udagram stack a
 This CloudFormation template defines a highly available Udagram application infrastructure on AWS. Here's an overview of the key components and configurations:
 
 # Parameters:
-**NetTeamInfra:** Specifies the environment name that will be prefixed to the resource names.
-**AppName:** Defines the name of the application-related resources.
+- **NetTeamInfra:** Specifies the environment name that will be prefixed to the resource names.
+- **AppName:** Defines the name of the application-related resources.
 
 # Resources:
 **1. Security Groups:**
