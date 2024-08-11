@@ -15,31 +15,48 @@ Resources:
     Properties:
       GroupDescription: Allow HTTP access to the load balancer.
       VpcId:
-        Fn::ImportValue:
-          !Sub "${NetTeamInfra}-vpc-id"
+        Fn::ImportValue: !Sub "${NetTeamInfra}-vpc-id"
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
           CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 9090
+          ToPort: 9090
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: IaC App
 
   UdagramServerSecGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Allow HTTP access to the hosts from MyLoadBalancerSecGroup.
+      GroupDescription: Allow HTTP and SSH access to the hosts.
       VpcId:
-        Fn::ImportValue:
-          !Sub "${NetTeamInfra}-vpc-id"
+        Fn::ImportValue: !Sub "${NetTeamInfra}-vpc-id"
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
-          SourceSecurityGroupId: !Ref MyLoadBalancerSecGroup
-      SecurityGroupEgress:
-        - IpProtocol: tcp
-          FromPort: 0
-          ToPort: 65535
           CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0 # Use a range of ip addresses for least privilege
+        - IpProtocol: tcp
+          FromPort: 9090
+          ToPort: 9090
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: IaC App
 
   UdagramAppServerRole:
     Type: AWS::IAM::Role
@@ -65,6 +82,17 @@ Resources:
                   - s3:PutObject
                   - s3:DeleteObject
                 Resource: !Sub "arn:aws:s3:::${AppName}-app-storage-bucket/*"
+        - PolicyName: myUdagramEC2DescribePolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ec2:DescribeInstances
+                Resource: "*"
+      Tags:
+        - Key: Name
+          Value: IaC App
 
   UdagramAppInstanceProfile:
     Type: AWS::IAM::InstanceProfile
@@ -75,42 +103,316 @@ Resources:
 
   UdagramAppLaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
-    Properties: 
+    Properties:
       LaunchTemplateName: !Sub "${AppName}-web-servers"
       LaunchTemplateData:
         UserData:
           Fn::Base64: !Sub |
             #!/bin/bash
-            apt-get update -y
-            apt-get install apache2 -y
-            systemctl start apache2.service
+            set -e
+            
+            #Update and Upgrade System
+            sudo apt-get update -y
+            sudo apt-get upgrade -y
+
+            #Install Apache, Git and SendEmail
+            sudo apt-get install -y apache2 git libio-socket-ssl-perl libnet-ssleay-perl
+            sudo systemctl start apache2.service
+
+            # Clone application repository
             cd /var/www/html
-            echo "Application Web Server Up and Running!" > index.html
+            sudo rm -rf *
+            git clone https://github.com/msizafrans/IaC_Application.git
+            sudo mv IaC_Application/* .
+            sudo rm -rf IaC_Application
+            sudo systemctl restart apache2.service
+
+            # Install Prometheus
+            cd /home/ubuntu
+            wget https://github.com/prometheus/prometheus/releases/download/v2.37.0/prometheus-2.37.0.linux-amd64.tar.gz
+            tar xvf prometheus-2.37.0.linux-amd64.tar.gz
+            sudo mv prometheus-2.37.0.linux-amd64/prometheus /usr/local/bin/
+            sudo mv prometheus-2.37.0.linux-amd64/promtool /usr/local/bin/
+            sudo mv prometheus-2.37.0.linux-amd64/consoles /etc/prometheus/
+            sudo mv prometheus-2.37.0.linux-amd64/console_libraries /etc/prometheus/
+            sudo mv prometheus-2.37.0.linux-amd64/prometheus.yml /etc/prometheus/
+
+            # Create Prometheus user
+            sudo useradd --no-create-home --shell /bin/false prometheus
+            sudo mkdir -p /var/lib/prometheus/
+            sudo chown -R prometheus:prometheus /etc/prometheus /usr/local/bin/prometheus /usr/local/bin/promtool /var/lib/prometheus/
+
+            # Create Prometheus service
+            sudo tee /etc/systemd/system/prometheus.service > /dev/null <<EOL
+            [Unit]
+            Description=Prometheus
+            Wants=network-online.target
+            After=network-online.target
+
+            [Service]
+            User=prometheus
+            Group=prometheus
+            Type=simple
+            ExecStart=/usr/local/bin/prometheus \
+              --config.file /etc/prometheus/prometheus.yml \
+              --storage.tsdb.path /var/lib/prometheus/ \
+              --web.console.templates=/etc/prometheus/consoles \
+              --web.console.libraries=/etc/prometheus/console_libraries
+
+            [Install]
+            WantedBy=multi-user.target
+            EOL
+
+            sudo systemctl daemon-reload
+            sudo systemctl start prometheus
+            sudo systemctl enable prometheus
+
+            # Install Node Exporter
+            cd /home/ubuntu
+            wget https://github.com/prometheus/node_exporter/releases/download/v1.3.1/node_exporter-1.3.1.linux-amd64.tar.gz
+            tar xvf node_exporter-1.3.1.linux-amd64.tar.gz
+            sudo mv node_exporter-1.3.1.linux-amd64/node_exporter /usr/local/bin/
+
+            # Create Node Exporter user
+            sudo useradd --no-create-home --shell /bin/false node_exporter
+            sudo chown node_exporter:node_exporter /usr/local/bin/node_exporter
+            sudo chmod 755 /usr/local/bin/node_exporter
+
+            # Create Node Exporter service
+            sudo tee /etc/systemd/system/node_exporter.service > /dev/null <<EOL
+            [Unit]
+            Description=Node Exporter
+            Wants=network-online.target
+            After=network-online.target
+
+            [Service]
+            User=node_exporter
+            Group=node_exporter
+            Type=simple
+            ExecStart=/usr/local/bin/node_exporter
+
+            [Install]
+            WantedBy=multi-user.target
+            EOL
+
+            sudo systemctl daemon-reload
+            sudo systemctl start node_exporter
+            sudo systemctl enable node_exporter
+
+            # Install Apache Exporter
+            cd /home/ubuntu
+            wget https://github.com/Lusitaniae/apache_exporter/releases/download/v0.10.1/apache_exporter-0.10.1.linux-amd64.tar.gz
+            tar xvf apache_exporter-0.10.1.linux-amd64.tar.gz
+            sudo mv apache_exporter-0.10.1.linux-amd64/apache_exporter /usr/local/bin/
+
+            # Create Apache Exporter service
+            sudo tee /etc/systemd/system/apache_exporter.service > /dev/null <<EOL
+            [Unit]
+            Description=Apache Exporter
+            Wants=network-online.target
+            After=network-online.target
+
+            [Service]
+            User=root
+            Group=root
+            Type=simple
+            ExecStart=/usr/local/bin/apache_exporter --scrape_uri=http://localhost/server-status?auto
+
+            [Install]
+            WantedBy=multi-user.target
+            EOL
+
+            sudo tee /etc/apache2/mods-available/status.conf > /dev/null <<EOL
+            <IfModule mod_status.c>
+                <Location /server-status>
+                    SetHandler server-status
+                    Require local
+                </Location>
+                <Location /server-info>
+                    SetHandler server-info
+                    Require local
+                </Location>
+                ExtendedStatus On
+            </IfModule>
+            EOL
+
+            sudo systemctl daemon-reload
+            sudo systemctl restart apache2
+            sudo systemctl start apache_exporter
+            sudo systemctl enable apache_exporter
+
+            # Install Alertmanager
+            cd /home/ubuntu
+            wget https://github.com/prometheus/alertmanager/releases/download/v0.24.0/alertmanager-0.24.0.linux-amd64.tar.gz
+            tar xvf alertmanager-0.24.0.linux-amd64.tar.gz
+            cd alertmanager-0.24.0.linux-amd64
+            sudo mv alertmanager /usr/local/bin/
+            sudo mv amtool /usr/local/bin/
+
+            # Create Alertmanager user and directories
+            sudo useradd --no-create-home --shell /bin/false alertmanager
+            sudo mkdir -p /var/lib/alertmanager
+            sudo mkdir -p /etc/alertmanager
+
+            # Create Alertmanager configuration
+            sudo tee /etc/alertmanager/alertmanager.yml > /dev/null <<EOL
+            global:
+              resolve_timeout: 5m
+
+            route:
+              receiver: 'default'
+              group_wait: 30s
+              group_interval: 5m
+              repeat_interval: 12h
+
+            receivers:
+            - name: 'default'
+              email_configs:
+              - to: 'msizafrans@gmail.com'
+                from: 'msizafrans@gmail.com'
+                smarthost: 'smtp.gmail.com:587'
+                auth_username: 'msizafrans@gmail.com'
+                auth_identity: 'msizafrans@gmail.com'
+                auth_password: 'mxtz whpm zqxx xdbx'
+                require_tls: true
+            EOL
+
+            sudo chown -R alertmanager:alertmanager /var/lib/alertmanager /etc/alertmanager
+
+            # Create Alertmanager service
+            sudo tee /etc/systemd/system/alertmanager.service > /dev/null <<EOL
+            [Unit]
+            Description=Alertmanager
+            Wants=network-online.target
+            After=network-online.target
+
+            [Service]
+            User=alertmanager
+            Group=alertmanager
+            Type=simple
+            ExecStart=/usr/local/bin/alertmanager --config.file=/etc/alertmanager/alertmanager.yml --storage.path=/var/lib/alertmanager/
+
+            [Install]
+            WantedBy=multi-user.target
+            EOL
+
+            sudo systemctl daemon-reload
+            sudo systemctl start alertmanager
+            sudo systemctl enable alertmanager
+
+            # Create Prometheus alert rules
+            sudo tee /etc/prometheus/alert_rules.yml > /dev/null <<EOL
+            groups:
+              - name: example_alerts
+                rules:
+                  - alert: InstanceDown
+                    expr: up == 0
+                    for: 5m
+                    labels:
+                      severity: critical
+                    annotations:
+                      summary: "Instance {{ $labels.instance }} down"
+                      description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes."
+            EOL
+
+            # Update Prometheus configuration
+            sudo tee /etc/prometheus/prometheus.yml > /dev/null <<EOL
+            global:
+              scrape_interval: 15s
+              evaluation_interval: 15s
+
+            alerting:
+              alertmanagers:
+                - static_configs:
+                    - targets: ['localhost:9093']
+
+            rule_files:
+              - "/etc/prometheus/alert_rules.yml"
+
+            scrape_configs:
+              - job_name: "prometheus"
+                static_configs:
+                  - targets: ["localhost:9090"]
+              - job_name: "nodes"
+                ec2_sd_configs:
+                  - region: "us-east-1"
+                    role_arn: "arn:aws:iam::576788639951:role/udagram-web-servers"
+                    filters:
+                      - name: "tag:Name"
+                        values: ["IaC App"]  # Use appropriate tags for your instances
+                relabel_configs:
+                  - source_labels: [__meta_ec2_instance_id]
+                    target_label: instance
+                  - source_labels: [__meta_ec2_tag_Name]
+                    target_label: instance_name
+                  - action: replace
+                    source_labels: [__meta_ec2_private_ip]
+                    target_label: instance_ip
+              - job_name: "node"
+                static_configs:
+                  - targets: ['localhost:9100']
+              - job_name: "apache2"
+                static_configs:
+                  - targets: ['localhost:9117']
+            remote_write:
+              - url: https://prometheus-prod-13-prod-us-east-0.grafana.net/api/prom/push
+                basic_auth:
+                  username: 1710197
+                  password: # Use your password
+            EOL
+            sudo systemctl daemon-reload
+            sudo systemctl restart prometheus
+            sudo systemctl enable prometheus
+
         ImageId: ami-053b0d53c279acc90
-        SecurityGroupIds:
-          - !Ref UdagramServerSecGroup
         InstanceType: t2.micro
+        KeyName: udagramkp
         BlockDeviceMappings:
           - DeviceName: "/dev/sdk"
             Ebs:
               VolumeSize: 10
         IamInstanceProfile:
           Name: !Ref UdagramAppInstanceProfile
+        NetworkInterfaces:
+          - AssociatePublicIpAddress: true
+            DeviceIndex: 0
+            SubnetId: 
+              Fn::Select: 
+                - '0'
+                - Fn::Split: 
+                  - ','
+                  - Fn::ImportValue: !Sub "${NetTeamInfra}-public-subnets"
+            Groups:
+              - !Ref UdagramServerSecGroup
+        TagSpecifications:
+          - ResourceType: instance
+            Tags:
+              - Key: Name
+                Value: IaC App
+          - ResourceType: volume
+            Tags:
+              - Key: Name
+                Value: IaC App
+
 
   UdagramWebAppGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
       VPCZoneIdentifier:
-      - Fn::ImportValue: 
-          !Sub "${NetTeamInfra}-private-subnets"
+        - Fn::ImportValue: !Sub "${NetTeamInfra}-public-subnet1"
+        - Fn::ImportValue: !Sub "${NetTeamInfra}-public-subnet2"
       LaunchTemplate:
         LaunchTemplateId: !Ref UdagramAppLaunchTemplate
         Version: !GetAtt UdagramAppLaunchTemplate.LatestVersionNumber
-      MinSize: '4'
-      DesiredCapacity: '4'
-      MaxSize: '4'
+      MinSize: '2'
+      DesiredCapacity: '2'
+      MaxSize: '2'
       TargetGroupARNs:
         - Ref: UdagramAppTargetGroup
+      Tags:
+        - Key: Name
+          Value: IaC App
+          PropagateAtLaunch: true
 
   MyLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
@@ -120,6 +422,9 @@ Resources:
         - Fn::ImportValue: !Sub "${NetTeamInfra}-public-subnet2"
       SecurityGroups:
         - Ref: MyLoadBalancerSecGroup
+      Tags:
+        - Key: Name
+          Value: IaC App
 
   Listener:
     Type: AWS::ElasticLoadBalancingV2::Listener
@@ -129,6 +434,16 @@ Resources:
           TargetGroupArn: !Ref UdagramAppTargetGroup
       LoadBalancerArn: !Ref MyLoadBalancer
       Port: '80'
+      Protocol: HTTP
+
+  Listener9090:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref UdagramAppTargetGroup9090
+      LoadBalancerArn: !Ref MyLoadBalancer
+      Port: '9090'
       Protocol: HTTP
 
   MyLoadBalancerListenerRule:
@@ -143,6 +458,18 @@ Resources:
       ListenerArn: !Ref Listener
       Priority: 1
 
+  MyLoadBalancerListenerRule9090:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      Actions:
+        - Type: forward
+          TargetGroupArn: !Ref UdagramAppTargetGroup9090
+      Conditions:
+        - Field: path-pattern
+          Values: ['/']
+      ListenerArn: !Ref Listener9090
+      Priority: 2
+
   UdagramAppTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
@@ -156,8 +483,28 @@ Resources:
       Protocol: HTTP
       UnhealthyThresholdCount: 5
       VpcId: 
-        Fn::ImportValue:
-          Fn::Sub: "${NetTeamInfra}-vpc-id"
+        Fn::ImportValue: !Sub "${NetTeamInfra}-vpc-id"
+      Tags:
+        - Key: Name
+          Value: IaC App
+
+  UdagramAppTargetGroup9090:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckEnabled: true
+      HealthCheckIntervalSeconds: 10
+      HealthCheckPath: /metrics
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 8
+      HealthyThresholdCount: 2
+      Port: 9090
+      Protocol: HTTP
+      UnhealthyThresholdCount: 5
+      VpcId: 
+        Fn::ImportValue: !Sub "${NetTeamInfra}-vpc-id"
+      Tags:
+        - Key: Name
+          Value: IaC App
 
   UdagramBucket:
     Type: AWS::S3::Bucket
@@ -168,6 +515,81 @@ Resources:
         BlockPublicPolicy: false
         IgnorePublicAcls: false
         RestrictPublicBuckets: false
+      Tags:
+        - Key: Name
+          Value: IaC App
+
+  PublicSubnet1NACL:
+    Type: AWS::EC2::NetworkAcl
+    Properties:
+      VpcId:
+        Fn::ImportValue:
+          !Sub "${NetTeamInfra}-vpc-id"
+      Tags:
+        - Key: Name
+          Value: Public Subnet 1 NACL
+
+  PublicSubnet1InboundRules9090:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref PublicSubnet1NACL
+      RuleNumber: 100
+      Protocol: 6
+      RuleAction: allow
+      Egress: false
+      CidrBlock: 0.0.0.0/0
+      PortRange:
+        From: 9090
+        To: 9090
+
+  PublicSubnet1OutboundRules9090:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref PublicSubnet1NACL
+      RuleNumber: 100
+      Protocol: 6
+      RuleAction: allow
+      Egress: true
+      CidrBlock: 0.0.0.0/0
+      PortRange:
+        From: 9090
+        To: 9090
+
+  PublicSubnet2NACL:
+    Type: AWS::EC2::NetworkAcl
+    Properties:
+      VpcId:
+        Fn::ImportValue:
+          !Sub "${NetTeamInfra}-vpc-id"
+      Tags:
+        - Key: Name
+          Value: Public Subnet 2 NACL
+
+  PublicSubnet2InboundRules9090:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref PublicSubnet2NACL
+      RuleNumber: 100
+      Protocol: 6
+      RuleAction: allow
+      Egress: false
+      CidrBlock: 0.0.0.0/0
+      PortRange:
+        From: 9090
+        To: 9090
+
+  PublicSubnet2OutboundRules9090:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref PublicSubnet2NACL
+      RuleNumber: 100
+      Protocol: 6
+      RuleAction: allow
+      Egress: true
+      CidrBlock: 0.0.0.0/0
+      PortRange:
+        From: 9090
+        To: 9090
 
 Outputs:
   LoadBalancerURL:
@@ -177,6 +599,14 @@ Outputs:
         - ""
         - - "http://"
           - !GetAtt MyLoadBalancer.DNSName
+  LoadBalancerURL9090:
+    Description: Public URL of the Load Balancer for port 9090.
+    Value:
+      Fn::Join:
+        - ""
+        - - "http://"
+          - !GetAtt MyLoadBalancer.DNSName
+          - ":9090"
   BucketName:
     Description: Name of the S3 bucket.
     Value: !Ref UdagramBucket
