@@ -67,7 +67,7 @@ This CloudFormation template defines a highly available Udagram application infr
 # Resources:
 **1. Security Groups:**
 MyLoadBalancerSecGroup: Security Group allowing HTTP (port 80) and Prometheus (port 9090) access to the load balancer.
-UdagramServerSecGroup: Security Group allowing HTTP (port 80), SSH (port 22), and Prometheus (port 9090) access to the application servers.
+UdagramServerSecGroup: Security Group allowing HTTP (port 80), SSH (port 22), and Prometheus (port 9090) access to the application servers running on Ubuntu Linux Instances.
 
 **2. IAM Roles and Instance Profiles:**
 UdagramAppServerRole: IAM role for EC2 instances, granting permissions to interact with S3 buckets and describe EC2 instances.
@@ -95,7 +95,7 @@ PublicSubnet1NACL & PublicSubnet2NACL: Network ACLs for the public subnets.
 Inbound and Outbound Rules: Allow traffic on port 9090.
 
 #User Data Script:
-The user data script in the launch template configures each EC2 instance with the following:
+The user data script in the launch template configures each Ubuntu Linux EC2 instance with the following:
 
 - **Apache Web Server:** To serve the Udagram application.
 - **Prometheus and Node Exporter:** For monitoring and metrics collection.
