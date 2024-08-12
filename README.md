@@ -15,6 +15,7 @@ In this project, I deployed web servers for a highly available web app using Clo
 - Automation and Scripting
 - Scalability
 - AWS Services
+- Ubuntu Linux
 
 
 # Contents of templates in .yml and .json files
@@ -97,10 +98,12 @@ Inbound and Outbound Rules: Allow traffic on port 9090.
 **User Data Script:**
 The user data script in the launch template configures each Ubuntu Linux EC2 instance with the following:
 
-- **Apache Web Server:** To serve the Udagram application.
-- **Prometheus and Node Exporter:** For monitoring and metrics collection.
-- **Apache Exporter:** To export Apache metrics to Prometheus.
-- **Alertmanager:** To manage alerts from Prometheus.
+- **Run System Updates**
+- **Apache2:** Installed and started to serve web content.
+- **Git:** Installed to clone the application repository.
+- **Prometheus and Node Exporter:** Installed and configured for system monitoring.
+- **Apache Exporter:** Installed and configured for monitoring Apache server metrics.
+- **Alertmanager:** Installed to handle alert notifications.
 
 **This template is designed for a highly available setup with load balancing, monitoring, and alerting integrated directly into the infrastructure. The template is modular and can be adapted to different environments by changing the parameter values.**
 
