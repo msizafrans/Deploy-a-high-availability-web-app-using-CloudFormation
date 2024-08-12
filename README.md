@@ -94,7 +94,7 @@ UdagramBucket: An S3 bucket for application storage, with public access enabled.
 PublicSubnet1NACL & PublicSubnet2NACL: Network ACLs for the public subnets.
 Inbound and Outbound Rules: Allow traffic on port 9090.
 
-#User Data Script:
+**User Data Script:**
 The user data script in the launch template configures each Ubuntu Linux EC2 instance with the following:
 
 - **Apache Web Server:** To serve the Udagram application.
