@@ -20,7 +20,7 @@ In this project, I deployed web servers for a highly available web app using Clo
 - Observability
 
 
-# Contents of templates in .yml and .json files
+# Contents of templates in *.yml* and *.json* files
 
 - **network.yml**: A template file to deploy networking infrastructure managed by the networking team. Resources include VPC, Internet Gateway, Subnets, EC2 instances, and NAT Gateways.
 
