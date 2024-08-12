@@ -12,10 +12,12 @@ In this project, I deployed web servers for a highly available web app using Clo
 - High Availability
 - Infrastructure as Code (IaC)
 - Security
-- Automation and Scripting
+- Automation
+- Scripting
 - Scalability
-- AWS Services
-- Ubuntu Linux
+- AWS 
+- Linux/Unix
+- Observability
 
 
 # Contents of templates in .yml and .json files
