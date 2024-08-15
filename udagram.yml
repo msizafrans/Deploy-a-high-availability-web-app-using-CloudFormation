@@ -122,9 +122,9 @@ Resources:
             # Clone application repository
             cd /var/www/html
             sudo rm -rf *
-            git clone https://github.com/msizafrans/IaC_Application.git
-            sudo mv IaC_Application/* .
-            sudo rm -rf IaC_Application
+            git clone https://github.com/msizafrans/static-website-files.git
+            sudo mv static-website-files/* .
+            sudo rm -rf static-website-files
             sudo systemctl restart apache2.service
 
             # Install Prometheus
