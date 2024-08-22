@@ -8,7 +8,7 @@ In this project, I deployed web servers for a highly available web app using Clo
 - Your favorite IDE or text editor ready to work.
 
 
-# Topics Covered
+### Topics Covered
 - High Availability
 - Infrastructure as Code (IaC)
 - Security
@@ -20,7 +20,7 @@ In this project, I deployed web servers for a highly available web app using Clo
 - Observability
 
 
-# Contents of templates in .yml and .json files
+### Contents of templates in .yml and .json files
 
 - **network.yml**: A template file to deploy networking infrastructure managed by the networking team. Resources include VPC, Internet Gateway, Subnets, EC2 instances, and NAT Gateways.
 
@@ -33,7 +33,7 @@ In this project, I deployed web servers for a highly available web app using Clo
 - **runscript.sh**: A script detailing how to deploy and tear down resources automatically.
 
 
-# Project Instructions
+### Project Instructions
 
 1. Plan and design a visual diagram that depicts the infrastructure layout of resources (see "Diagram.JPG" file).
 
@@ -44,7 +44,7 @@ In this project, I deployed web servers for a highly available web app using Clo
 4. To avoid errors when tearing down resources, delete the udagram/application stack first, followed by the network stack.
 
 
-# How to Spin Up Resources
+### How to Spin Up Resources
 
 From your IDE terminal, ensure you have permission to execute files in your working directory. For example, if you are using Visual Studio Code, you might need to run chmod +x runscript.sh to grant execute permission.
 
@@ -52,22 +52,22 @@ From your IDE terminal, ensure you have permission to execute files in your work
 - ./runscript.sh deploy udagram udagram.yml udagram-parameters.json us-east-1
 
 
-# How to Tear Down Resources
+### How to Tear Down Resources
 
 - ./runscript.sh delete udagram udagram.yml udagram-parameters.json us-east-1
 - ./runscript.sh delete network network.yml network-parameters.json us-east-1
 
 
-# Useful Information
+### Useful Information
 To access the deployed application, check the outputs tab of the udagram stack and open the Load Balancer URL provided in that section.
 
 This CloudFormation template defines a highly available Udagram application infrastructure on AWS. Here's an overview of the key components and configurations:
 
-# Parameters:
+### Parameters:
 - **NetTeamInfra:** Specifies the environment name that will be prefixed to the resource names.
 - **AppName:** Defines the name of the application-related resources.
 
-# Resources:
+### Resources:
 **1. Security Groups:**
 MyLoadBalancerSecGroup: Security Group allowing HTTP (port 80) and Prometheus (port 9090) access to the load balancer.
 UdagramServerSecGroup: Security Group allowing HTTP (port 80), SSH (port 22), and Prometheus (port 9090) access to the application servers running on Ubuntu Linux Instances.
