@@ -12,8 +12,7 @@ In this project, I deployed web servers for a highly available web app using Clo
 - High Availability
 - Infrastructure as Code (IaC)
 - Security
-- Automation
-- Scripting
+- Scripting and Automation
 - Scalability
 - AWS CloudFormation
 - Linux/Unix
