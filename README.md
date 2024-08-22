@@ -15,7 +15,7 @@ In this project, I deployed web servers for a highly available web app using Clo
 - Automation
 - Scripting
 - Scalability
-- AWS 
+- AWS CloudFormation
 - Linux/Unix
 - Observability
 
