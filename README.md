@@ -2,7 +2,7 @@
 In this project, I deployed web servers for a highly available web app using CloudFormation. Wrote the code to create and deploy the infrastructure and application for an Instagram-like app from scratch. The process begins with deploying the networking components, followed by servers, security roles, and software.
 
 
-# Dependencies
+### Dependencies
 - AWS CLI installed and configured in your workspace using an AWS IAM role with Administrator permissions.
 - Access to a diagram creation software of your choice.
 - Your favorite IDE or text editor ready to work.
